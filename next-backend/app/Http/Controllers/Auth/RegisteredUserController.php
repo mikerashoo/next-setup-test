@@ -22,14 +22,30 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        $request->validate(
+            [
+                'name' => ['required', 'string', 'max:255'],
+                'phone_number' => ['required', 'string', 'max:255', 'unique:users', 'starts_with:09', 'digits:10'],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ],
+            [
+                'phone_number.starts_with' => 'Only phone number startes with 09 is valid',
+            ]
+        );
+
+        if (isset($request->email)) {
+            $this->validate(
+                $request,
+                [
+                    'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+
+                ]
+            );
+        }
 
         $user = User::create([
             'name' => $request->name,
+            'phone_number' => $request->phone_number,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);

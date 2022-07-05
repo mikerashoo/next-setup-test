@@ -21,6 +21,7 @@ const Register = () => {
 
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
+    const [phone_number, setPhoneNumber] = useState('')
     const [password, setPassword] = useState('')
     const [passwordConfirmation, setPasswordConfirmation] = useState('')
     const [errors, setErrors] = useState([])
@@ -36,7 +37,7 @@ const Register = () => {
     const submitForm = event => {
         event.preventDefault()
 
-        register({ name, email, password, password_confirmation: passwordConfirmation, setErrors })
+        register({ name, phone_number, email, password, password_confirmation: passwordConfirmation, setErrors })
     }
 
     return (
@@ -68,6 +69,20 @@ const Register = () => {
                         />
                     </div>
 
+                    {/* Phone Number */}
+                    <div className="mt-4">
+                        <Label htmlFor="phoneNumber">Phone Number</Label>
+
+                        <Input
+                            id="phoneNumber"
+                            type="tel"
+                            value={phone_number}
+                            className="block mt-1 w-full"
+                            onChange={event => setPhoneNumber(event.target.value)}
+                            required
+                        />
+                    </div>
+
                     {/* Email Address */}
                     <div className="mt-4">
                         <Label htmlFor="email">Email</Label>
@@ -78,7 +93,7 @@ const Register = () => {
                             value={email}
                             className="block mt-1 w-full"
                             onChange={event => setEmail(event.target.value)}
-                            required
+                        // required
                         />
                     </div>
 

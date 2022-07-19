@@ -3,7 +3,7 @@ import axios from '@/lib/axios'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 
-export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
+export const useAuth = ({ middleware, redirectIfAuthenticated, role } = {}) => {
     const router = useRouter()
 
     const { data: user, error, mutate } = useSWR('/api/user', () =>
@@ -44,6 +44,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             .post('/login', props)
             .then(() => mutate())
             .catch(error => {
+
                 if (error.response.status !== 422) throw error
 
                 setErrors(Object.values(error.response.data.errors).flat())
@@ -89,7 +90,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     }
 
     const logout = async () => {
-        if (! error) {
+        if (!error) {
             await axios
                 .post('/logout')
                 .then(() => mutate())
@@ -99,7 +100,25 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     }
 
     useEffect(() => {
-        if (middleware === 'guest' && redirectIfAuthenticated && user) router.push(redirectIfAuthenticated)
+        if (middleware === 'guest' && redirectIfAuthenticated && user) {
+            console.log("user", user);
+            switch (user.role) {
+                case 'admin':
+                    router.push('/admin')
+                    break;
+                default:
+                    router.push('/provider')
+
+            }
+        }
+
+
+        if (middleware === 'auth' && role && user) {
+            console.log("user role authentication", user);
+
+            if (user.role != role) router.push('/401')
+        }
+
         if (middleware === 'auth' && error) logout()
     }, [user, error])
 

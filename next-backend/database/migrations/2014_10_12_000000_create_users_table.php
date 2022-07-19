@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('phone_number')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('role', ['provider_admin', 'admin', 'super_admin'])->default('provider_admin');
+
             $table->rememberToken();
             $table->timestamps();
         });

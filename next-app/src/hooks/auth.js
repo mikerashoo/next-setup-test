@@ -20,67 +20,86 @@ export const useAuth = ({ middleware, redirectIfAuthenticated, role } = {}) => {
     const csrf = () => axios.get('/sanctum/csrf-cookie')
 
     const register = async ({ setErrors, ...props }) => {
-        await csrf()
+        try {
+            await csrf()
 
-        setErrors([])
+            setErrors([])
 
-        axios
-            .post('/register', props)
-            .then(() => mutate())
-            .catch(error => {
-                if (error.response.status !== 422) throw error
+            axios
+                .post('/register', props)
+                .then(() => mutate())
+                .catch(error => {
+                    if (error.response.status !== 422) throw error
 
-                setErrors(Object.values(error.response.data.errors).flat())
-            })
+                    setErrors(Object.values(error.response.data.errors).flat())
+                })
+        }
+        catch (e) {
+            setErrors([process.env.UNKOWN_SERVER_ERROR_MESSAGE]);
+        }
     }
 
     const login = async ({ setErrors, setStatus, ...props }) => {
-        await csrf()
+        try {
+            await csrf()
 
-        setErrors([])
-        setStatus(null)
+            setErrors([])
+            setStatus(null)
+            axios
+                .post('/login', props)
+                .then(() => mutate())
+                .catch(error => {
+                    if (error.response.status !== 422) throw error
 
-        axios
-            .post('/login', props)
-            .then(() => mutate())
-            .catch(error => {
+                    setErrors(Object.values(error.response.data.errors).flat())
+                })
+        }
+        catch (e) {
+            setErrors([process.env.UNKOWN_SERVER_ERROR_MESSAGE]);
+        }
 
-                if (error.response.status !== 422) throw error
-
-                setErrors(Object.values(error.response.data.errors).flat())
-            })
     }
 
     const forgotPassword = async ({ setErrors, setStatus, email }) => {
-        await csrf()
+        try {
+            await csrf()
 
-        setErrors([])
-        setStatus(null)
+            setErrors([])
+            setStatus(null)
 
-        axios
-            .post('/forgot-password', { email })
-            .then(response => setStatus(response.data.status))
-            .catch(error => {
-                if (error.response.status !== 422) throw error
+            axios
+                .post('/forgot-password', { email })
+                .then(response => setStatus(response.data.status))
+                .catch(error => {
+                    if (error.response.status !== 422) throw error
 
-                setErrors(Object.values(error.response.data.errors).flat())
-            })
+                    setErrors(Object.values(error.response.data.errors).flat())
+                })
+        }
+        catch (e) {
+            setErrors([process.env.UNKOWN_SERVER_ERROR_MESSAGE]);
+        }
     }
 
     const resetPassword = async ({ setErrors, setStatus, ...props }) => {
-        await csrf()
+        try {
+            await csrf()
 
-        setErrors([])
-        setStatus(null)
+            setErrors([])
+            setStatus(null)
 
-        axios
-            .post('/reset-password', { token: router.query.token, ...props })
-            .then(response => router.push('/login?reset=' + btoa(response.data.status)))
-            .catch(error => {
-                if (error.response.status !== 422) throw error
+            axios
+                .post('/reset-password', { token: router.query.token, ...props })
+                .then(response => router.push('/login?reset=' + btoa(response.data.status)))
+                .catch(error => {
+                    if (error.response.status !== 422) throw error
 
-                setErrors(Object.values(error.response.data.errors).flat())
-            })
+                    setErrors(Object.values(error.response.data.errors).flat())
+                })
+        }
+        catch (e) {
+            setErrors([process.env.UNKOWN_SERVER_ERROR_MESSAGE]);
+        }
     }
 
     const resendEmailVerification = ({ setStatus }) => {

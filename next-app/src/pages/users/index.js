@@ -9,11 +9,21 @@ import { END } from 'redux-saga';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsersAction } from '@/lib/actions/user_actions';
 import { NextPage } from 'next';
-const Users = () => {
-    const userDataStore = useSelector(state => state.usersDataStore);
-    const dispatch = useDispatch();
-    console.log("usersData", userDataStore);
+import axios from '@/lib/axios';
+import { addUser, addUsers, setUsers } from '@/lib/store slices/usersSlice';
+import useSWR from 'swr';
+import Button from '@/components/Button'
 
+const Users = () => {
+    const { users } = useSelector((state) => state.users);
+    const dispatch = useDispatch();
+    const onAddUser = () => {
+        let user = {
+            name: "Biniam"
+        };
+
+        dispatch(addUser(user));
+    }
     return (
         <AppLayout
             header={
@@ -31,9 +41,10 @@ const Users = () => {
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200">
                             {
-                                userDataStore.users && userDataStore.users.map((user, i) => <p key={i}>{user.name}</p>)
+                                users && users.map((user, i) => <p key={i}>{user.name}</p>)
                             }
                         </div>
+                        <Button onClick={onAddUser}>Add user</Button>
                     </div>
                 </div>
             </div>
@@ -41,21 +52,15 @@ const Users = () => {
     )
 }
 
-// export const getServerSideProps = wrapper.getServerSideProps(
-//     async ({ store, req }) => {
-//         // Dispatch regular redux-saga action
-//         store.dispatch(fetchUsersAction());
+export const getServerSideProps = wrapper.getServerSideProps(
+    (store) => async () => {
+        const response = await axios(`/api/users`
+        );
+        const data = await response.data;
+        // console.log(data);
+        store.dispatch(setUsers(data));
 
-//         // Stop the saga
-//         store.dispatch(END);
-//         await store.sagaTask.toPromise();
-//     }
-// );
+    })
 
-export const getServerSideProps = wrapper.getServerSideProps(store => ({ req, res, ...etc }) => {
 
-    store.dispatch(fetchUsersAction());
-
-});
-
-export default Users
+export default Users;

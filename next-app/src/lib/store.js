@@ -1,37 +1,29 @@
-import { createStore, applyMiddleware } from 'redux';
-import createSagaMiddleware from 'redux-saga';
-import { createWrapper } from 'next-redux-wrapper';
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import { HYDRATE, createWrapper } from 'next-redux-wrapper'
+import users from './store slices/usersSlice'
 
-import rootReducer from './reducers';
-import rootSaga from './sagas';
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
+const combinedReducer = combineReducers({
+    users,
+});
 
-export const makeStore = () => {
-    // 1: Create the middleware
-    const sagaMiddleware = createSagaMiddleware();
+const masterReducer = (state, action) => {
+    if (action.type === HYDRATE) {
+        const nextState = {
+            ...state, // use previous state
 
-    // 2: Add an extra parameter for applying middleware
-    const store = configureStore({
+            users: {
+                users: [...action.payload.users.users, ...state.users.users]
+            }
+        }
+        return nextState;
+    } else {
+        return combinedReducer(state, action)
+    }
+}
 
-        reducer: rootReducer,
-
-        middleware: (getDefaultMiddleware) => getDefaultMiddleware({
-            serializableCheck: false,
-            thunk: false
-        }).concat(sagaMiddleware)
+export const makeStore = () =>
+    configureStore({
+        reducer: masterReducer,
     });
 
-    // 3: Run your sagas on server
-    store.sagaTask = sagaMiddleware.run(rootSaga);
-    if (module.hot) {
-        module.hot.accept('./reducers', () => {
-            const nextRootReducer = require('./reducers');
-            store.replaceReducer(nextRootReducer);
-        });
-    }
-    // 4: now return the store
-    return store;
-};
-
-export const wrapper = createWrapper(makeStore);
-
+export const wrapper = createWrapper(makeStore, { debug: true });

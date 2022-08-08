@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { useAuth } from '@/hooks/auth'
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import ProviderLayout from '@/components/Layouts/ProviderLayout';
+import ProviderLayout from '@/components/Layouts/provider_layouts/ProviderLayout';
 
 const Dashboard = () => {
 
@@ -16,7 +16,7 @@ const Dashboard = () => {
             }>
 
             <Head>
-                <title>Laravel - Dashboard</title>
+                <title>Diggis - Providers</title>
             </Head>
 
             <div className="py-12">

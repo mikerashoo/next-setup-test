@@ -1,17 +1,9 @@
 import AppLayout from '@/components/Layouts/AppLayout'
-import Head from 'next/head'
-import { useAuth } from '@/hooks/auth'
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-// import ProviderLayout from '@/components/Layouts/provider_layouts/ProviderLayout';
-import { wrapper } from '@/lib/store';
-import { END } from 'redux-saga';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchUsersAction } from '@/lib/actions/user_actions';
-import { NextPage } from 'next';
+import Head from 'next/head' 
+import { wrapper } from '@/lib/store'; 
+import { useDispatch, useSelector } from 'react-redux'; 
 import axios from '@/lib/axios';
-import { addUser, addUsers, setUsers } from '@/lib/store slices/usersSlice';
-import useSWR from 'swr';
+import { addUser, addUsers, setUsers } from '@/lib/store slices/usersSlice'; 
 import Button from '@/components/Button'
 
 const Users = () => {

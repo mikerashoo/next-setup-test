@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { useAuth } from '@/hooks/auth'
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import ProviderLayout from '@/components/Layouts/ProviderLayout';
+// import ProviderLayout from '@/components/Layouts/provider_layouts/ProviderLayout';
 import { wrapper } from '@/lib/store';
 import { END } from 'redux-saga';
 import { useDispatch, useSelector } from 'react-redux';
